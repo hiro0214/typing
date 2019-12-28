@@ -13,11 +13,12 @@
 
     <div v-else-if="gameInfo == 'game'">
       <transition name="timebar" appear>
-        <div v-show="timeBar" class="timebar"></div>
+        <div class="timebar"></div>
       </transition>
       <p>残り時間:{{ timer }}秒</p>
       <p class="displayname">{{ displayName }}</p>
       <p class="typename">{{ typeName }}</p>
+      <p>score:{{ score }}</p>
       <p>{{ count }}問目</p>
       <p>ミスタッチ:{{ missCount }}回</p>
       <p v-show="finish" class="finish">終了!!</p>
@@ -26,6 +27,7 @@
     <div v-else-if="gameInfo == 'result'">
       <p>{{ userName }}さんの結果</p>
       <p>問題数: {{ count }}</p>
+      <p>score: {{ score }}</p>
       <p>タッチ速度: {{ keySpeed }}</p>
       <p>ミスタッチ回数: {{ missCount }}</p>
       <v-btn @click="start">もう1度</v-btn>
@@ -41,12 +43,12 @@
 
 .displayname {
   font-size:50px;
-  border-bottom:solid 1px;
   margin-top:150px;
 }
 
 .typename {
   font-size:30px;
+  border-top: solid 1px;
   &::first-letter {
     color:rgb(255, 77, 45);
   }
@@ -61,7 +63,7 @@
   height:25px;
   background:rgb(200, 200, 200);
   animation-name: timeBar;
-  animation-duration: 10s;
+  animation-duration: 90s;
   animation-timing-function: linear;
   // animation-iteration-count: infinite;
   animation-direction: reverse;
@@ -111,7 +113,7 @@ export default {
         { displayName: 'flex-wrap: wrap;', typeName: 'flex-wrap:wrap;'},
         { displayName: 'mysql -u root -p', typeName: 'mysql-uroot-p'},
         { displayName: 'position: absolute;', typeName: 'position:absolute;'},
-        { displayName: '<p>Hello World!</p>', typeName: '<p>helloworld!</p>'},
+        { displayName: 'Hello World!', typeName: 'helloworld!'},
         { displayName: 'ps aux | grep unicorn', typeName: 'psaux|grepunicorn'},
         { displayName: 'Aws Web Servise', typeName: 'awswebservice'}
         // { displayName: '', typeName: ''},
@@ -123,10 +125,11 @@ export default {
       count: 1,
       successKey: 0,
       missCount: 0,
-      setTimer: null,
       timer: 90,
-      timeBar: false,
-      // timeBarCount: 10,
+      setTimer: null,
+      bonusCount: 5,
+      setBonus: null,
+      score: '',
       finish: false,
       userName: ''
     }
@@ -151,10 +154,11 @@ export default {
       this.count = 1
       this.successKey = 0
       this.missCount =  0
-      this.timer = 5
+      this.timer = 90
+      this.score = 0
       this.setTimer = null
-      this.timeBar = true
       this.finish = false
+      this.setBonus = setInterval(this.bonusDown, 1000)
     },
     typingCheck (e) {
       let type = e.key
@@ -166,6 +170,11 @@ export default {
           this.missCount ++
         }
         if (this.typeName.length === 0 ) {
+          if (this.bonusCount > 0) {
+            this.score += (String(this.displayName.replace(/\s+/g, '')).length) * 10 * 2
+          } else {
+            this.score += (String(this.displayName.replace(/\s+/g, '')).length) * 10
+          }
           this.questionClear()
           this.question(this.count)
         }
@@ -174,34 +183,18 @@ export default {
     timerDown () {
       this.timer -= 1
     },
+    bonusDown () {
+      this.bonusCount -= 1
+    },
     question (num) {
       this.displayName = this.typeList[num - 1].displayName
       this.typeName = this.typeList[num - 1].typeName
-      // this.$store.dispatch('game/setTimeBar')
     },
     questionClear () {
       this.count ++
-      // this.$store.dispatch('game/clearTimeBar')
-      this.timeBar = false
-
-      // this.timeBar = false
-      // document.getElementById('timerbar').remove(".timebar")
-      // const timeBarDom = this.$refs.timebar
-      // timeBarDom.remove()
-      // const boxDom = this.$refs.box
-      // boxDom.add(timeBarDom)
+      this.bonusCount = 5
     },
-    setTimebar () {
-      alert('set')
-    },
-    clearTimebar () {
-      alert('clear')
-    },
-    // timeBarCount() {
-    //   this.timeBarCount -= 1
-    // },
     gameFinish () {
-      // this.timeBar = false
       this.finish = true
       window.removeEventListener('keydown', this.typingCheck)
       setTimeout(this.result, 3000)
@@ -213,19 +206,13 @@ export default {
   computed: {
     keySpeed () {
       return this.successKey / 10
-    },
+    }
   },
   watch: {
-    // timeBar(val) {
-    //   if(val === true) {
-    //     this.setTimebar()
-    //   } else if (val === false) {
-    //     this.clearTimebar()
-    //   }
-    // }
     timer(val) {
       if ( val === 0 ) {
         clearInterval(this.setTimer)
+        clearInterval(this.setBonus)
         this.gameFinish()
       }
     }
