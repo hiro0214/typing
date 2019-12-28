@@ -1,24 +1,36 @@
-// export const state = {
-//   timeBar: false
-// }
+import firebase from '~/plugins/firebase'
+const db = firebase.firestore().collection('data')
 
-// export const mutations = {
-//   setTimeBar(state) {
-//     state.timeBar = true
-//   },
-//   clearTimeBar(state) {
-//     state.timeBar = false
-//   }
-// }
-// export const actions = {
-//   setTimeBar({ commit }) {
-//     commit('setTimeBar')
-//   },
-//   clearTimeBar({ commit }) {
-//     commit('clearTimeBar')
-//   }
-// }
+export const state = {
+  words: []
+}
 
-// export const getters = {
-//   timeBar: state => state.timeBar
-// }
+export const mutations = {
+  dataInit(state, payload) {
+    state.words.push(payload)
+  }
+}
+export const actions = {
+  regist({ }, payload) {
+    db.add({
+      displayName: payload.displayName,
+      typeName: payload.typeName
+    }).then(() => {
+      alert('登録が完了しました')
+    })
+  },
+  dataInit({ commit }) {
+    db.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const wordData = {
+          displayName: doc.data().displayName,
+          typeName: doc.data().typeName
+        }
+        commit('dataInit', wordData)
+      })
+    })
+  }
+}
+
+export const getters = {
+}
