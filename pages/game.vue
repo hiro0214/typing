@@ -98,26 +98,11 @@
 
 <script>
 export default {
+  created () {
+    this.$store.dispatch('game/dataInit')
+  },
   data () {
     return {
-      words: [
-        { displayName: 'Vue.js', typeName: 'vue.js'},
-        { displayName: 'Nuxt.js', typeName: 'nuxt.js'},
-        { displayName: 'Java Script', typeName: 'javascript'},
-        { displayName: 'jQuery', typeName: 'jquery'},
-        { displayName: 'React', typeName: 'react'},
-        { displayName: 'margin: 0 auto;', typeName: 'margin:0auto;'},
-        { displayName: 'git pull origin master', typeName: 'gitpulloriginmaster'},
-        { displayName: 'Hyper Text Markup Language', typeName: 'hypertextmarkuplanguage'},
-        { displayName: 'text-align: center;', typeName: 'text-align:center;'},
-        { displayName: 'flex-wrap: wrap;', typeName: 'flex-wrap:wrap;'},
-        { displayName: 'mysql -u root -p', typeName: 'mysql-uroot-p'},
-        { displayName: 'position: absolute;', typeName: 'position:absolute;'},
-        { displayName: 'Hello World!', typeName: 'helloworld!'},
-        { displayName: 'ps aux | grep unicorn', typeName: 'psaux|grepunicorn'},
-        { displayName: 'Aws Web Servise', typeName: 'awswebservice'}
-        // { displayName: '', typeName: ''},
-      ],
       gameInfo: 'open',
       typeList: [],
       displayName: '',
@@ -137,7 +122,7 @@ export default {
   methods: {
     start () {
       this.init()
-      let words = this.words
+      let words = this.$store.state.game.words
       words = words.map(function(a){return [a, Math.random()]})
             .sort(function(a, b){return a[1] - b[1]})
             .map(function(a){return a[0]});
@@ -205,7 +190,7 @@ export default {
   },
   computed: {
     keySpeed () {
-      return this.successKey / 10
+      return this.successKey / 90
     }
   },
   watch: {
