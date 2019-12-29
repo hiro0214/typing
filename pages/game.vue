@@ -13,7 +13,7 @@
 
     <div v-else-if="gameInfo == 'game'">
       <transition name="timebar" appear>
-        <div class="timebar"></div>
+        <div v-show="flag" class="timebar"></div>
       </transition>
       <p>残り時間:{{ timer }}秒</p>
       <p class="displayname">{{ displayName }}</p>
@@ -24,12 +24,15 @@
       <p v-show="finish" class="finish">終了!!</p>
     </div>
 
-    <div v-else-if="gameInfo == 'result'">
+    <div v-else-if="gameInfo == 'result'" class="result">
+      <h2>Result</h2>
       <p>{{ userName }}さんの結果</p>
-      <p>問題数: {{ count }}</p>
-      <p>score: {{ score }}</p>
-      <p>タッチ速度: {{ keySpeed }}</p>
-      <p>ミスタッチ回数: {{ missCount }}</p>
+      <ul>
+        <li><span>問題数</span><span>{{ count }}問</span></li>
+        <li><span>score</span><span>{{ score }}pt</span></li>
+        <li><span>タッチ速度</span><span>{{ keySpeed }}回/秒</span></li>
+        <li><span>ミスタッチ回数</span><span>{{ missCount }}回</span></li>
+      </ul>
       <v-btn @click="start">もう1度</v-btn>
       <div class="topBack">
         <v-btn to="/">トップに戻る</v-btn>
@@ -94,6 +97,25 @@
   bottom:170px;
 }
 
+.result {
+  padding:20px 0;
+  p {
+    margin-top:20px;
+  }
+  ul {
+    width:28%;
+    list-style:none;
+    margin:30px auto 60px;
+    li {
+      display:flex;
+      justify-content:space-between;
+      > span {
+        display:block;
+      }
+    }
+  }
+}
+
 </style>
 
 <script>
@@ -114,7 +136,8 @@ export default {
       setTimer: null,
       bonusCount: 5,
       setBonus: null,
-      score: '',
+      score: 0,
+      flag: false,
       finish: false,
       userName: ''
     }
@@ -142,6 +165,7 @@ export default {
       this.timer = 90
       this.score = 0
       this.setTimer = null
+      this.flag = true
       this.finish = false
       this.setBonus = setInterval(this.bonusDown, 1000)
     },
@@ -186,11 +210,19 @@ export default {
     },
     result () {
       this.gameInfo = 'result'
+      this.flag = false
+      const userScore = {
+        name: this.userName,
+        score: this.score,
+        count: this.count,
+        keySpeed: (this.successKey / 90).toFixed(1)
+      }
+      this.$store.dispatch('game/addScore', userScore)
     }
   },
   computed: {
     keySpeed () {
-      return this.successKey / 90
+      return (this.successKey / 90).toFixed(1)
     }
   },
   watch: {
