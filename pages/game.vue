@@ -184,6 +184,7 @@ export default {
       words.forEach((doc) => {
         this.typeList.push(doc)
       })
+      // console.log(this.typeList.length) 77
       window.addEventListener('keydown', this.typingCheck)
       this.setTimer = setInterval(this.timerDown, 1000)
       this.question(this.count)
