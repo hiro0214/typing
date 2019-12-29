@@ -12,16 +12,30 @@
     </div>
 
     <div v-else-if="gameInfo == 'game'">
+
       <transition name="timebar" appear>
         <div v-show="flag" class="timebar"></div>
       </transition>
-      <p>残り時間:{{ timer }}秒</p>
-      <p class="displayname">{{ displayName }}</p>
-      <p class="typename">{{ typeName }}</p>
-      <p>score:{{ score }}</p>
-      <p>{{ count }}問目</p>
-      <p>ミスタッチ:{{ missCount }}回</p>
+
+      <div class="upper-info">
+        <div>
+          <span>スコア</span><span>{{ score }}pt</span>
+        </div>
+        <div>
+          <span>ミス</span><span>{{ missCount }}回</span>
+        </div>
+      </div>
+
+      <span class="timer">残り時間:{{ timer }}秒</span>
+
+      <div class="game-display">
+        <h3>{{ count }}問目</h3>
+        <p class="displayname">{{ displayName }}</p>
+        <p ref="typename" class="typename">{{ typeName }}</p>
+      </div>
+
       <p v-show="finish" class="finish">終了!!</p>
+
     </div>
 
     <div v-else-if="gameInfo == 'result'" class="result">
@@ -44,15 +58,32 @@
 
 <style scoped lang="scss">
 
-.displayname {
-  font-size:50px;
-  margin-top:150px;
+.upper-info {
+  width:150px;
+  padding: 5px 0 0 10px;
+  text-align:left;
+  div {
+    display:flex;
+    justify-content: space-between;
+  }
+}
+
+.timer {
+  position:relative;
+  bottom:50px;
+}
+
+.game-display {
+  margin-top:70px;
+  .displayname {
+    font-size:50px;
+  }
 }
 
 .typename {
   font-size:30px;
   border-top: solid 1px;
-  &::first-letter {
+  &:first-letter {
     color:rgb(255, 77, 45);
   }
 }
@@ -121,11 +152,13 @@
 <script>
 export default {
   created () {
+    this.$store.dispatch('game/dataClear')
     this.$store.dispatch('game/dataInit')
   },
   data () {
     return {
       gameInfo: 'open',
+      userName: '',
       typeList: [],
       displayName: '',
       typeName: '',
@@ -138,8 +171,7 @@ export default {
       setBonus: null,
       score: 0,
       flag: false,
-      finish: false,
-      userName: ''
+      finish: false
     }
   },
   methods: {
@@ -165,6 +197,7 @@ export default {
       this.timer = 90
       this.score = 0
       this.setTimer = null
+      this.setBonus = null
       this.flag = true
       this.finish = false
       this.setBonus = setInterval(this.bonusDown, 1000)
@@ -178,6 +211,7 @@ export default {
         } else {
           this.missCount ++
         }
+
         if (this.typeName.length === 0 ) {
           if (this.bonusCount > 0) {
             this.score += (String(this.displayName.replace(/\s+/g, '')).length) * 10 * 2
@@ -190,10 +224,10 @@ export default {
       }
     },
     timerDown () {
-      this.timer -= 1
+      this.timer --
     },
     bonusDown () {
-      this.bonusCount -= 1
+      this.bonusCount --
     },
     question (num) {
       this.displayName = this.typeList[num - 1].displayName

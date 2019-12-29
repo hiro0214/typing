@@ -1,5 +1,6 @@
 import firebase from '~/plugins/firebase'
-const db = firebase.firestore().collection('data')
+const dataDB = firebase.firestore().collection('data')
+const scoreDB = firebase.firestore().collection('score')
 
 export const state = {
   words: [],
@@ -7,6 +8,9 @@ export const state = {
 }
 
 export const mutations = {
+  dataClear(state) {
+    state.words = []
+  },
   dataInit(state, payload) {
     state.words.push(payload)
   },
@@ -19,15 +23,18 @@ export const mutations = {
 }
 export const actions = {
   regist({ }, payload) {
-    db.add({
+    dataDB.add({
       displayName: payload.displayName,
       typeName: payload.typeName
     }).then(() => {
       alert('登録が完了しました')
     })
   },
+  dataClear({ commit }) {
+    commit('dataClear')
+  },
   dataInit({ commit }) {
-    db.get().then((querySnapshot) => {
+    dataDB.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         const wordData = {
           displayName: doc.data().displayName,
@@ -38,7 +45,7 @@ export const actions = {
     })
   },
   addScore({ }, payload) {
-    firebase.firestore().collection('score').add({
+    scoreDB.add({
       userName: payload.name,
       score: payload.score,
       count: payload.count,
@@ -49,7 +56,7 @@ export const actions = {
     commit('rankingInit')
   },
   ranking({ commit }) {
-    firebase.firestore().collection('score').orderBy('score', 'desc').limit(5).get().then((querySnapshot) => {
+    scoreDB.orderBy('score', 'desc').limit(5).get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         const userScore = doc.data()
         commit('ranking', userScore)

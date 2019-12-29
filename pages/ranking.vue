@@ -30,13 +30,15 @@ ul {
   list-style: none;
   margin:30px auto;
   li {
-    width:45%;
+    width:60%;
     border-bottom:solid 1px;
     margin:20px auto;
     .upper-info {
       display:flex;
     }
     span {
+      width:180px;
+      display:inline-block;
       margin:0 20px;
     }
   }
