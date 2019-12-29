@@ -2,37 +2,23 @@
   <div class="ranking">
     <h2>ランキングページ</h2>
     <ul>
-      <li v-for="(data, index) in datas" :key="data">
+      <li v-for="(data, index) in $store.state.game.ranking" :key="data">
         <div class="upper-info">
           <strong>{{ index + 1 }}位</strong>
-          <span>名前: {{ data.name }}</span>
-          <span>スコア: {{ data.score }}</span>
+          <div>
+            <span>名前: {{ data.userName }}</span>
+            <span>スコア: {{ data.score }}pt</span>
+          </div>
         </div>
         <div class="lower-info">
-          <span>問題数: {{ data.question }}</span>
-          <span>タッチ速度: {{ data.keyspeed }}</span>
+          <span>問題数: {{ data.count }}問</span>
+          <span>タッチ速度: {{ data.keySpeed }}回/秒</span>
         </div>
       </li>
     </ul>
     <v-btn to="/">トップに戻る</v-btn>
   </div>
 </template>
-
-<script>
-export default {
-  data () {
-    return {
-      datas: [
-        {name: '田中', score: '2000', question: '10', keyspeed: '5.0'},
-        {name: '山田', score: '1500', question: '8', keyspeed: '3.0'},
-        {name: '佐藤', score: '2200', question: '12', keyspeed: '5.8'},
-        {name: '鈴木', score: '1200', question: '6', keyspeed: '2.9'},
-        {name: '坂本', score: '1900', question: '9', keyspeed: '4.6'},
-      ]
-    }
-  }
-}
-</script>
 
 <style scoped lang="scss">
 
@@ -44,10 +30,25 @@ ul {
   list-style: none;
   margin:30px auto;
   li {
-    width:50%;
+    width:45%;
     border-bottom:solid 1px;
     margin:20px auto;
+    .upper-info {
+      display:flex;
+    }
+    span {
+      margin:0 20px;
+    }
   }
 }
 
 </style>
+
+<script>
+export default {
+  created () {
+    this.$store.dispatch('game/rankingInit')
+    this.$store.dispatch('game/ranking')
+  }
+}
+</script>
