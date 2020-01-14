@@ -99,7 +99,6 @@
   animation-name: timeBar;
   animation-duration: 90s;
   animation-timing-function: linear;
-  // animation-iteration-count: infinite;
   animation-direction: reverse;
 }
 
