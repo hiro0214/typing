@@ -1,7 +1,15 @@
 <template>
   <div class="default">
     <div class="display">
-      <nuxt />
+      <mq-layout mq="pc">
+        <nuxt />
+      </mq-layout>
+      <mq-layout mq="tb">
+        <div class="errorMsg">
+          <p>このページはパソコン版のみ対応です。</p>
+          <p>パソコンで表示されない方は、画面サイズを大きくして下さい。</p>
+        </div>
+      </mq-layout>
     </div>
   </div>
 </template>
@@ -23,6 +31,10 @@
   background:#fff;
   text-align:center;
   position:relative;
+}
+
+.errorMsg {
+  margin-top:40px;
 }
 
 </style>
