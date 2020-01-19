@@ -11,6 +11,7 @@
       </div>
     </div>
 
+
     <div v-else-if="gameInfo == 'game'">
 
       <transition name="timebar" appear>
@@ -35,8 +36,8 @@
       </div>
 
       <p v-show="finish" class="finish">終了!!</p>
-
     </div>
+
 
     <div v-else-if="gameInfo == 'result'" class="result">
       <h2>Result</h2>
@@ -48,9 +49,11 @@
         <li><span>ミスタッチ回数</span><span>{{ missCount }}回</span></li>
       </ul>
       <v-btn @click="start">もう1度</v-btn>
+
       <div class="topBack">
         <v-btn to="/">トップに戻る</v-btn>
       </div>
+
     </div>
 
   </div>
@@ -183,7 +186,6 @@ export default {
       words.forEach((doc) => {
         this.typeList.push(doc)
       })
-      // console.log(this.typeList.length) 77
       window.addEventListener('keydown', this.typingCheck)
       this.setTimer = setInterval(this.timerDown, 1000)
       this.question(this.count)
