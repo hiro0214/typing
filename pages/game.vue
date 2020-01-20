@@ -79,7 +79,7 @@
 .game-display {
   margin-top:70px;
   .displayname {
-    font-size:50px;
+    font-size:40px;
   }
 }
 
